@@ -72,5 +72,17 @@ jobs:
           aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
 
+      - name: Pull latest images 
+        run: |
+          docker pull ${{secrets.AWS_ECR_LOGIN_URI}}/${{secrets.ECR_REPOSITORY_NAME}}:latest 
+
+      - name: Run Docker Image to serve users
+        run: |
+          docker run -d -p 8080:8080 --ipc="host" --name=mltest -e 'AWS_ACCESS_KEY_ID'=${{secrets.ECR_REPOSITORY_NAME}}: latest
+      - name: Clean previous images and containers
+        run: |
+          docker system prune -f     
+
+
 
 
